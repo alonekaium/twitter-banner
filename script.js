@@ -9,7 +9,7 @@ downloadBtn.addEventListener("click", downloadBanner);
 function generateBanner() {
   const bg = new Image();
   // এখানে তোমার artist-এর বানানো ব্যানার ব্যাকগ্রাউন্ড দাও 👇
-  bg.src = "https://yourdomain.com/twitter-banner-bg.png"; 
+  bg.src = "ban.webp"; 
   bg.crossOrigin = "anonymous";
 
   bg.onload = () => {
