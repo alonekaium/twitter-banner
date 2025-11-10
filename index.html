@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Twitter Banner Generator</title>
-
   <style>
     body {
       background: #f8f9fb;
@@ -211,12 +210,7 @@
     let bg = new Image();
     let logo = null;
 
-    // ✅ তোমার ৩টা ব্যাকগ্রাউন্ড ইমেজ লিংক দাও
-    const backgrounds = [
-      "ban.webp",
-      "ban2.webp",
-      "ban3.webp"
-    ];
+    const backgrounds = ["ban.webp", "ban2.webp", "ban3.webp"];
 
     // ব্যাকগ্রাউন্ড থাম্বনেইল তৈরি
     backgrounds.forEach((url, index) => {
@@ -239,7 +233,6 @@
     });
 
     // ডিফল্ট ব্যাকগ্রাউন্ড
-    bg.crossOrigin = "anonymous";
     bg.src = backgrounds[0];
     bg.onload = () => drawBanner();
 
@@ -282,22 +275,29 @@
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(bg, 0, 0, canvas.width, canvas.height);
 
-      // Overlay gradient
+      // Gradient overlay
       const gradient = ctx.createLinearGradient(0, 0, 0, 500);
       gradient.addColorStop(0, "rgba(0,0,0,0.2)");
       gradient.addColorStop(1, "rgba(0,0,0,0.3)");
       ctx.fillStyle = gradient;
-      ctx.fillRect(0, 0, 1500, 500);
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Text
+      // Username text
       const username = document.getElementById("username").value || "Your Name";
       ctx.font = "bold 100px Arial";
       ctx.fillStyle = textColor;
       ctx.textAlign = "center";
       ctx.fillText(username, canvas.width / 2, 260);
 
-      // Logo (optional)
+      // Logo
       if (logo) {
         const logoWidth = 200;
         const logoHeight = 200;
-        const logoX = can
+        const logoX = canvas.width - logoWidth - 100;
+        const logoY = 150;
+        ctx.drawImage(logo, logoX, logoY, logoWidth, logoHeight);
+      }
+    }
+  </script>
+</body>
+</html>
