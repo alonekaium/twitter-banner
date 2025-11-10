@@ -4,10 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Twitter Banner Generator</title>
+
   <style>
     body {
-      background: #0f0f0f;
-      color: #fff;
+      background: #f8f9fb;
+      color: #222;
       font-family: "Poppins", sans-serif;
       display: flex;
       flex-direction: column;
@@ -18,14 +19,19 @@
     }
 
     h2 {
-      margin-bottom: 10px;
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+      font-weight: 600;
+      color: #222;
     }
 
     canvas {
-      border: 1px solid #444;
-      border-radius: 10px;
-      margin-bottom: 15px;
+      border: 1px solid #ddd;
+      border-radius: 16px;
+      margin-bottom: 20px;
       max-width: 100%;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+      background: #fff;
     }
 
     .controls {
@@ -33,46 +39,58 @@
       flex-wrap: wrap;
       justify-content: center;
       gap: 10px;
-      margin-bottom: 20px;
+      margin-bottom: 25px;
     }
 
     input[type="text"] {
-      padding: 10px;
-      border-radius: 6px;
-      border: none;
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
       outline: none;
-      width: 220px;
+      width: 240px;
+      font-size: 1rem;
     }
 
     button {
       padding: 10px 18px;
       background: #1da1f2;
       border: none;
-      border-radius: 6px;
+      border-radius: 10px;
       color: #fff;
       cursor: pointer;
-      transition: 0.3s;
+      transition: all 0.3s;
+      font-weight: 500;
     }
 
     button:hover {
       background: #0d8bd9;
+      transform: scale(1.05);
+    }
+
+    .section {
+      text-align: center;
+      margin-bottom: 20px;
     }
 
     h3 {
-      margin: 10px 0;
+      margin-bottom: 10px;
+      font-size: 1rem;
+      color: #333;
+      font-weight: 600;
     }
 
     .bg-select {
       display: flex;
       justify-content: center;
-      gap: 10px;
-      margin: 10px 0 20px;
+      gap: 15px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
     }
 
     .bg-option {
-      width: 100px;
-      height: 60px;
-      border-radius: 8px;
+      width: 110px;
+      height: 65px;
+      border-radius: 10px;
       overflow: hidden;
       cursor: pointer;
       border: 2px solid transparent;
@@ -88,18 +106,68 @@
 
     .bg-option.active {
       border: 2px solid #1da1f2;
+      box-shadow: 0 4px 10px rgba(29, 161, 242, 0.3);
+    }
+
+    .color-logo {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
     }
 
     #colorPicker {
-      width: 80px;
-      height: 40px;
-      border: none;
+      width: 70px;
+      height: 45px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
       cursor: pointer;
-      margin-top: 10px;
+      background: #fff;
     }
 
     #logoUpload {
-      margin-top: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background: #fff;
+      padding: 6px 8px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    #logoUpload:hover {
+      box-shadow: 0 0 6px rgba(0,0,0,0.1);
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      h2 {
+        font-size: 1.5rem;
+      }
+
+      canvas {
+        width: 100%;
+        height: auto;
+      }
+
+      .controls {
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      input[type="text"] {
+        width: 100%;
+      }
+
+      .bg-option {
+        width: 90px;
+        height: 55px;
+      }
+
+      button {
+        width: 100%;
+      }
     }
   </style>
 </head>
@@ -114,14 +182,21 @@
     <button id="downloadBtn">Download</button>
   </div>
 
-  <h3>Select a Background</h3>
-  <div class="bg-select" id="bgSelector"></div>
+  <div class="section">
+    <h3>Select a Background</h3>
+    <div class="bg-select" id="bgSelector"></div>
+  </div>
 
-  <h3>Select Text Color</h3>
-  <input type="color" id="colorPicker" value="#ffffff">
-
-  <h3>Upload Your Logo</h3>
-  <input type="file" id="logoUpload" accept="image/*">
+  <div class="color-logo">
+    <div>
+      <h3>Text Color</h3>
+      <input type="color" id="colorPicker" value="#000000">
+    </div>
+    <div>
+      <h3>Upload Logo</h3>
+      <input type="file" id="logoUpload" accept="image/*">
+    </div>
+  </div>
 
   <script>
     const canvas = document.getElementById("bannerCanvas");
@@ -132,18 +207,18 @@
     const logoInput = document.getElementById("logoUpload");
     const bgSelector = document.getElementById("bgSelector");
 
-    let textColor = "#ffffff";
+    let textColor = "#000000";
     let bg = new Image();
     let logo = null;
 
-    // 🔹 তোমার ৩টা ব্যাকগ্রাউন্ড লিংক এখানে দাও
+    // ✅ তোমার ৩টা ব্যাকগ্রাউন্ড ইমেজ লিংক দাও
     const backgrounds = [
       "ban.webp",
       "ban2.webp",
       "ban3.webp"
     ];
 
-    // 🔹 ব্যাকগ্রাউন্ড থাম্বনেইল তৈরি
+    // ব্যাকগ্রাউন্ড থাম্বনেইল তৈরি
     backgrounds.forEach((url, index) => {
       const div = document.createElement("div");
       div.classList.add("bg-option");
@@ -163,15 +238,15 @@
       bgSelector.appendChild(div);
     });
 
-    // 🔹 ডিফল্ট ব্যাকগ্রাউন্ড লোড
+    // ডিফল্ট ব্যাকগ্রাউন্ড
     bg.crossOrigin = "anonymous";
     bg.src = backgrounds[0];
     bg.onload = () => drawBanner();
 
-    // 🔹 Generate Button
+    // Generate Button
     generateBtn.addEventListener("click", drawBanner);
 
-    // 🔹 Download Button
+    // Download Button
     downloadBtn.addEventListener("click", () => {
       const link = document.createElement("a");
       link.download = "twitter-banner.png";
@@ -179,13 +254,13 @@
       link.click();
     });
 
-    // 🔹 Text Color Change
+    // Text Color Change
     colorPicker.addEventListener("input", e => {
       textColor = e.target.value;
       drawBanner();
     });
 
-    // 🔹 Logo Upload
+    // Logo Upload
     logoInput.addEventListener("change", e => {
       const file = e.target.files[0];
       if (!file) {
@@ -202,7 +277,7 @@
       reader.readAsDataURL(file);
     });
 
-    // 🔹 Draw Everything
+    // Draw Everything
     function drawBanner() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(bg, 0, 0, canvas.width, canvas.height);
@@ -210,7 +285,7 @@
       // Overlay gradient
       const gradient = ctx.createLinearGradient(0, 0, 0, 500);
       gradient.addColorStop(0, "rgba(0,0,0,0.2)");
-      gradient.addColorStop(1, "rgba(0,0,0,0.4)");
+      gradient.addColorStop(1, "rgba(0,0,0,0.3)");
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, 1500, 500);
 
@@ -225,11 +300,4 @@
       if (logo) {
         const logoWidth = 200;
         const logoHeight = 200;
-        const logoX = canvas.width - logoWidth - 100;
-        const logoY = 150;
-        ctx.drawImage(logo, logoX, logoY, logoWidth, logoHeight);
-      }
-    }
-  </script>
-</body>
-</html>
+        const logoX = can
