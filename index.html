@@ -31,4 +31,183 @@
     .controls {
       display: flex;
       flex-wrap: wrap;
-      justify-conte
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    input[type="text"] {
+      padding: 10px;
+      border-radius: 6px;
+      border: none;
+      outline: none;
+      width: 200px;
+    }
+
+    button {
+      padding: 10px 18px;
+      background: #1da1f2;
+      border: none;
+      border-radius: 6px;
+      color: #fff;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #0d8bd9;
+    }
+
+    h3 {
+      margin-top: 15px;
+    }
+
+    .bg-select {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: 10px 0 20px;
+    }
+
+    .bg-option {
+      width: 80px;
+      height: 50px;
+      border: none;
+      cursor: pointer;
+      border-radius: 6px;
+    }
+
+    #colorPicker {
+      width: 80px;
+      height: 40px;
+      border: none;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    #logoUpload {
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="generator-wrapper">
+    <h2>Create Your Twitter Banner</h2>
+
+    <canvas id="bannerCanvas" width="1500" height="500"></canvas>
+
+    <div class="controls">
+      <input type="text" id="username" placeholder="Your Name">
+      <button id="generateBtn">Generate</button>
+      <button id="downloadBtn">Download</button>
+    </div>
+
+    <h3>Select a Background</h3>
+    <div class="bg-select">
+      <button class="bg-option" style="background:#00ff88;"></button>
+      <button class="bg-option" style="background:#ff00cc;"></button>
+      <button class="bg-option" style="background:#ffda59;"></button>
+    </div>
+
+    <h3>Select text color</h3>
+    <input type="color" id="colorPicker" value="#ffffff">
+
+    <h3>Upload your logo</h3>
+    <input type="file" id="logoUpload" accept="image/*">
+  </div>
+
+  <script>
+    const canvas = document.getElementById("bannerCanvas");
+    const ctx = canvas.getContext("2d");
+    const generateBtn = document.getElementById("generateBtn");
+    const downloadBtn = document.getElementById("downloadBtn");
+    const bgButtons = document.querySelectorAll(".bg-option");
+    const colorPicker = document.getElementById("colorPicker");
+    const logoInput = document.getElementById("logoUpload");
+
+    let textColor = "#ffffff";
+    let bg = new Image();
+    let logo = null;
+
+    // ব্যাকগ্রাউন্ডগুলো এখানে বসাও (নিজের ৩টা ইমেজ লিংক দিও)
+    const backgrounds = [
+      "ban.webp",
+      "ban2.webp,
+      "ban3.webp"
+    ];
+
+    // ডিফল্ট ব্যাকগ্রাউন্ড
+    bg.crossOrigin = "anonymous";
+    bg.src = backgrounds[0];
+    bg.onload = () => drawBanner();
+
+    // ব্যাকগ্রাউন্ড চেঞ্জ
+    bgButtons.forEach((btn, index) => {
+      btn.addEventListener("click", () => {
+        bg.src = backgrounds[index];
+        bg.onload = () => drawBanner();
+      });
+    });
+
+    // টেক্সট কালার চেঞ্জ
+    colorPicker.addEventListener("input", (e) => {
+      textColor = e.target.value;
+      drawBanner();
+    });
+
+    // লোগো আপলোড
+    logoInput.addEventListener("change", (event) => {
+      const file = event.target.files[0];
+      if (!file) {
+        logo = null;
+        drawBanner();
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        logo = new Image();
+        logo.onload = () => drawBanner();
+        logo.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    generateBtn.addEventListener("click", drawBanner);
+    downloadBtn.addEventListener("click", downloadBanner);
+
+    function drawBanner() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(bg, 0, 0, canvas.width, canvas.height);
+
+      const gradient = ctx.createLinearGradient(0, 0, 0, 500);
+      gradient.addColorStop(0, "rgba(0,0,0,0.2)");
+      gradient.addColorStop(1, "rgba(0,0,0,0.4)");
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, 1500, 500);
+
+      // নাম বড় করে, সাদা বক্স এর মধ্যে
+      const username = document.getElementById("username").value || "Your Name";
+      ctx.font = "bold 100px Arial";
+      ctx.fillStyle = textColor;
+      ctx.textAlign = "center";
+      ctx.fillText(username, canvas.width / 2, 260);
+
+      // লোগো (ডানদিকে)
+      if (logo) {
+        const logoWidth = 200;
+        const logoHeight = 200;
+        const logoX = canvas.width - logoWidth - 100;
+        const logoY = 150;
+        ctx.drawImage(logo, logoX, logoY, logoWidth, logoHeight);
+      }
+    }
+
+    function downloadBanner() {
+      const link = document.createElement("a");
+      link.download = "twitter-banner.png";
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    }
+  </script>
+</body>
+</html>
