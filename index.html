@@ -176,7 +176,7 @@
   <canvas id="bannerCanvas" width="1500" height="500"></canvas>
 
   <div class="controls">
-    <input type="text" id="username" placeholder="Your Name">
+    <input type="text" id="username" placeholder="Name">
     <button id="generateBtn">Generate</button>
     <button id="downloadBtn">Download</button>
   </div>
@@ -291,8 +291,8 @@
 
       // Logo
       if (logo) {
-        const logoWidth = 200;
-        const logoHeight = 200;
+        const logoWidth = 300;
+        const logoHeight = 300;
         const logoX = canvas.width - logoWidth - 100;
         const logoY = 150;
         ctx.drawImage(logo, logoX, logoY, logoWidth, logoHeight);
